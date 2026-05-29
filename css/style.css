@@ -1,0 +1,269 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0c0c0c;
+  --bg-glass: #0c0c0cee;
+  --surface: #111;
+
+  --accent: #8a8aff;
+
+  --fg: #a0a0a0;
+  --white: #e8e8e8;
+  --white-dim: #e8e8e873;
+
+  --border: #161616;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+::selection {
+  background: #3a3a3a;
+  color: var(--white);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  background: var(--bg-glass);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav {
+  padding: 0 1.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-size: 0.85rem;
+  color: var(--white-dim);
+  transition: color 0.2s;
+}
+
+.nav-logo:hover {
+  color: var(--white);
+}
+
+.nav-logo .accent {
+  font-weight: 500;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.75rem;
+}
+
+.nav-links a {
+  font-size: 0.8rem;
+  color: var(--white-dim);
+  transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--white);
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-comment {
+  font-size: 0.8rem;
+  color: var(--white-dim);
+}
+
+.hero-name {
+  font-size: 3rem;
+  letter-spacing: -0.05em;
+  color: var(--white);
+}
+
+.cursor {
+  color: var(--accent);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin-bottom: 2rem;
+}
+
+.section-prefix {
+  color: var(--accent);
+  margin-right: 0.5rem;
+}
+
+.about,
+.projects {
+  padding: 6rem 0;
+}
+
+.about-content p {
+  font-size: 0.9375rem;
+  color: var(--fg);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.about-content p:last-child {
+  margin-bottom: 0;
+}
+
+.about-content strong {
+  color: var(--white);
+  font-weight: 500;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.project-card {
+  background: var(--surface);
+  border-left: 2px solid var(--border);
+  padding: 1.5rem 1.75rem;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.project-card:hover {
+  border-left-color: var(--accent);
+}
+
+.project-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.75rem;
+}
+
+.project-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.project-arrow {
+  color: var(--white-dim);
+  margin-right: 0.25rem;
+}
+
+.project-link {
+  font-size: 0.75rem;
+  color: var(--white-dim);
+  transition: color 0.2s;
+  padding-bottom: 1px;
+}
+
+.project-link:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.project-description {
+  font-size: 0.875rem;
+  color: var(--fg);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lang-tag {
+  font-size: 0.6rem;
+  color: var(--accent);
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.footer {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer p {
+  font-size: 0.75rem;
+  color: var(--white-dim);
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .hero {
+    min-height: 85vh;
+  }
+
+  .hero-name {
+    font-size: 2rem;
+  }
+
+  .project-card {
+    padding: 1.25rem;
+  }
+}
