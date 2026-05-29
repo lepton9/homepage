@@ -1,74 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>yourname</title>
+    <meta
+      name="description"
+      content="Systems programmer. C, Zig, and whatever runs close to the metal."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>yourname</title>
-  <meta name="description" content="Systems programmer. C, Zig, and whatever runs close to the metal.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
+  <body>
+    <header class="header">
+      <nav class="nav container">
+        <a href="#" class="nav-logo"
+          >~/<span class="accent">tonihirvonen</span></a
+        >
+        <ul class="nav-links">
+          <li><a href="#about">.about</a></li>
+          <li><a href="#projects">.projects</a></li>
+        </ul>
+      </nav>
+    </header>
 
-<body>
-
-  <header class="header">
-    <nav class="nav container">
-      <a href="#" class="nav-logo">~/<span class="accent">tonihirvonen</span></a>
-      <ul class="nav-links">
-        <li><a href="#about">.about</a></li>
-        <li><a href="#projects">.projects</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-
-    <section class="hero" id="hero">
-      <div class="container">
-        <span class="hero-comment">// who am i</span>
-        <h1 class="hero-name">Toni Hirvonen<span class="cursor">_</span></h1>
-      </div>
-    </section>
-
-    <section class="about" id="about">
-      <div class="container">
-        <h2 class="section-title">
-          <span class="section-prefix">01.</span> about
-        </h2>
-        <div class="about-content">
-          <p>
-            I'm a university student in University of Jyväskylä.
-            I like systems programming and compilers.
-          </p>
-          <p>
-            Some of my favorite programming languages include <strong>C</strong> and <strong>Zig</strong>.
-            My favorite text editor is Vim or Neovim of course.
-          </p>
+    <main>
+      <section class="hero" id="hero">
+        <div class="container">
+          <span class="hero-comment">// who am i</span>
+          <h1 class="hero-name">Toni Hirvonen<span class="cursor">_</span></h1>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="projects" id="projects">
+      <section class="about" id="about">
+        <div class="container">
+          <h2 class="section-title">
+            <span class="section-prefix">01.</span> about
+          </h2>
+          <div class="about-content">
+            <p>
+              I'm a university student in University of Jyväskylä. I like
+              systems programming and compilers.
+            </p>
+            <p>
+              Some of my favorite programming languages include
+              <strong>C</strong> and <strong>Zig</strong>. My favorite text
+              editor is Vim or Neovim of course.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="projects" id="projects">
+        <div class="container">
+          <h2 class="section-title">
+            <span class="section-prefix">02.</span> projects
+          </h2>
+          <div class="projects-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
       <div class="container">
-        <h2 class="section-title">
-          <span class="section-prefix">02.</span> projects
-        </h2>
-        <div class="projects-list"></div>
+        <p>© 2026 Toni Hirvonen</p>
       </div>
-    </section>
+    </footer>
 
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <p>© 2026 Toni Hirvonen</p>
-    </div>
-  </footer>
-
-  <script src="js/script.js"></script>
-</body>
-
+    <script src="js/script.js"></script>
+  </body>
 </html>

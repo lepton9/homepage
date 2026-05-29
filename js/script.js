@@ -1,4 +1,3 @@
-
 const projects = [
   {
     name: "ztask",
@@ -16,7 +15,8 @@ const projects = [
   {
     name: "vbdist",
     source: "https://github.com/lepton9/vbdist",
-    description: "A tool for creating teams of equal size by evaluating player attributes.",
+    description:
+      "A tool for creating teams of equal size by evaluating player attributes.",
     tags: ["C", "TUI"],
   },
   {
@@ -36,11 +36,7 @@ const projects = [
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
 
-
-const header = document.querySelector(".header");
 const heroName = document.querySelector(".hero-name");
-const cursor = heroName.querySelector(".cursor");
-
 
 function onScroll() {
   window.requestAnimationFrame(() => {
@@ -58,10 +54,7 @@ function updateActiveLink() {
 
     if (scrollY >= top && scrollY < top + height) {
       navLinks.forEach((link) => {
-        link.classList.toggle(
-          "active",
-          link.getAttribute("href") === `#${id}`
-        );
+        link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
       });
     }
   });
@@ -112,7 +105,6 @@ function init() {
 
   renderProjects();
   updateActiveLink();
-};
+}
 
 init();
-
