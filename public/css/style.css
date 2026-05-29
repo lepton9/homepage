@@ -123,6 +123,17 @@ ul {
 
 .cursor {
   color: var(--accent);
+  display: none;
+  opacity: 1;
+  animation: none;
+  user-select: none;
+}
+
+.cursor.active {
+  display: inline-block;
+}
+
+.cursor.blink {
   animation: blink 1s step-end infinite;
 }
 

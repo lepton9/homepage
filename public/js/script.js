@@ -38,6 +38,24 @@ const navLinks = document.querySelectorAll(".nav-links a");
 
 const heroName = document.querySelector(".hero-name");
 
+const cursor = createCursor();
+
+function createCursor() {
+  const el = document.createElement("span");
+  el.id = "cursor";
+  el.className = "cursor";
+  el.textContent = "_";
+  return el;
+}
+
+function moveCursorToTextNode(textNode, cursorEl) {
+  if (!textNode || !cursorEl) return;
+  const parent = textNode.parentNode;
+  if (!parent) return;
+
+  parent.insertBefore(cursorEl, textNode.nextSibling);
+}
+
 function onScroll() {
   window.requestAnimationFrame(() => {
     updateActiveLink();
@@ -60,16 +78,38 @@ function updateActiveLink() {
   });
 }
 
-function typeText(fullText, textNode, ms_per_char) {
-  textNode.textContent = "";
-  let i = 0;
+async function typeText(fullText, textNode, ms_per_char, cursorEl) {
+  return new Promise((resolve) => {
+    if (!textNode) {
+      resolve();
+      return;
+    }
 
-  function appendChar() {
-    if (i >= fullText.length) return;
-    textNode.textContent += fullText.charAt(i++);
+    textNode.textContent = "";
+
+    if (cursorEl) {
+      moveCursorToTextNode(textNode, cursorEl);
+      cursorEl.classList.add("active");
+      cursorEl.classList.remove("blink");
+    }
+
+    let i = 0;
+
+    function appendChar() {
+      if (i >= fullText.length) {
+        if (cursorEl) {
+          cursorEl.classList.remove("active");
+          cursorEl.classList.remove("blink");
+        }
+        resolve();
+        return;
+      }
+      textNode.textContent += fullText.charAt(i++);
+      setTimeout(appendChar, ms_per_char);
+    }
+
     setTimeout(appendChar, ms_per_char);
-  }
-  setTimeout(appendChar, ms_per_char);
+  });
 }
 
 function renderProjects() {
@@ -96,9 +136,15 @@ function renderProjects() {
 
 function init() {
   if (heroName) {
-    const fullText = heroName.childNodes[0].textContent;
-    heroName.childNodes[0].textContent = "";
-    setTimeout(typeText, 200, fullText, heroName.childNodes[0], 70);
+    const textNode = heroName.childNodes[0];
+    const fullText = textNode?.textContent ?? "";
+
+    if (textNode) {
+      textNode.textContent = "";
+      setTimeout(() => {
+        typeText(fullText, textNode, 70, cursor);
+      }, 200);
+    }
   }
 
   window.addEventListener("scroll", onScroll, { passive: true });
