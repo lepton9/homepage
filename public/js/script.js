@@ -33,12 +33,29 @@ const projects = [
   },
 ];
 
+const DEFAULT_CHAR_SPEED_MS = 70;
+
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
 
 const heroName = document.querySelector(".hero-name");
 
 const cursor = createCursor();
+
+// const modes = ["normal", "insert", "command"];
+// let mode = "normal";
+
+function normalMode(cursorEl) {
+  // mode = "normal";
+  cursorEl.classList.remove("active");
+  cursorEl.classList.add("blink");
+}
+
+function insertMode(cursorEl) {
+  // mode = "insert";
+  cursorEl.classList.add("active");
+  cursorEl.classList.remove("blink");
+}
 
 function createCursor() {
   const el = document.createElement("span");
@@ -89,8 +106,7 @@ async function typeText(fullText, textNode, ms_per_char, cursorEl) {
 
     if (cursorEl) {
       moveCursorToTextNode(textNode, cursorEl);
-      cursorEl.classList.add("active");
-      cursorEl.classList.remove("blink");
+      insertMode(cursorEl);
     }
 
     let i = 0;
@@ -98,8 +114,7 @@ async function typeText(fullText, textNode, ms_per_char, cursorEl) {
     function appendChar() {
       if (i >= fullText.length) {
         if (cursorEl) {
-          cursorEl.classList.remove("active");
-          cursorEl.classList.remove("blink");
+          normalMode(cursorEl);
         }
         resolve();
         return;
@@ -142,7 +157,7 @@ function init() {
     if (textNode) {
       textNode.textContent = "";
       setTimeout(() => {
-        typeText(fullText, textNode, 70, cursor);
+        typeText(fullText, textNode, DEFAULT_CHAR_SPEED_MS, cursor);
       }, 200);
     }
   }

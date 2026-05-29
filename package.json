@@ -10,9 +10,9 @@
   },
   "scripts": {
     "dev": "wrangler pages dev public --live-reload",
-    "format": "prettier --write .",
-    "formatcheck": "prettier --check .",
-    "lint": "eslint .",
-    "lintfix": "eslint . --fix"
+    "format": "prettier --write public",
+    "formatcheck": "prettier --check public",
+    "lint": "eslint public",
+    "lintfix": "eslint public --fix"
   }
 }
