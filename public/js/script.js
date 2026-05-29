@@ -38,9 +38,11 @@ const DEFAULT_CHAR_SPEED_MS = 70;
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
 
-const heroName = document.querySelector(".hero-name");
-
 const cursor = createCursor();
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 // const modes = ["normal", "insert", "command"];
 // let mode = "normal";
@@ -57,6 +59,7 @@ function insertMode(cursorEl) {
   cursorEl.classList.remove("blink");
 }
 
+/* Create a cursor element. */
 function createCursor() {
   const el = document.createElement("span");
   el.id = "cursor";
@@ -65,6 +68,7 @@ function createCursor() {
   return el;
 }
 
+/* Move the cursor to the given text node. */
 function moveCursorToTextNode(textNode, cursorEl) {
   if (!textNode || !cursorEl) return;
   const parent = textNode.parentNode;
@@ -73,12 +77,63 @@ function moveCursorToTextNode(textNode, cursorEl) {
   parent.insertBefore(cursorEl, textNode.nextSibling);
 }
 
+/* Return the text node to write to. */
+function getTypewriteTextNode(el) {
+  if (!el) return null;
+
+  if (el.firstChild && el.firstChild.nodeType === Node.TEXT_NODE)
+    return el.firstChild;
+
+  const textNode = document.createTextNode("");
+  el.insertBefore(textNode, el.firstChild);
+  return textNode;
+}
+
+/* Collect all the elements that have the data-typewrite attribute. */
+function collectTypewriteTargets() {
+  const els = Array.from(document.querySelectorAll("[data-typewrite]"));
+  return els
+    .map((el) => {
+      const textNode = getTypewriteTextNode(el);
+
+      const preserveWhitespace = el.hasAttribute(
+        "data-typewrite-preserve-whitespace"
+      );
+
+      const textAttr = el.getAttribute("data-typewrite-text");
+      const rawText = (textAttr ?? textNode?.textContent ?? "").toString();
+
+      const fullText = preserveWhitespace
+        ? rawText
+        : rawText.replace(/[\t\n\r ]+/g, " ").trim();
+
+      const speedAttr = el.getAttribute("data-typewrite-speed");
+      const delayAttr = el.getAttribute("data-typewrite-delay");
+
+      const speed = Number.parseInt(
+        speedAttr ?? `${DEFAULT_CHAR_SPEED_MS}`,
+        10
+      );
+      const delay = Number.parseInt(delayAttr ?? "0", 10);
+
+      return {
+        el,
+        textNode,
+        fullText,
+        speed: Number.isFinite(speed) ? speed : DEFAULT_CHAR_SPEED_MS,
+        delay: Number.isFinite(delay) ? delay : 0,
+      };
+    })
+    .filter((t) => t.textNode && t.fullText.length > 0);
+}
+
 function onScroll() {
   window.requestAnimationFrame(() => {
     updateActiveLink();
   });
 }
 
+/* Update the active link in the header based on the scroll position */
 function updateActiveLink() {
   const scrollY = window.scrollY + 100;
 
@@ -95,7 +150,8 @@ function updateActiveLink() {
   });
 }
 
-async function typeText(fullText, textNode, ms_per_char, cursorEl) {
+/* Add typing animation to write the given text to the element */
+async function typeText(fullText, textNode, ms_per_char, cursorEl, opts) {
   return new Promise((resolve) => {
     if (!textNode) {
       resolve();
@@ -113,9 +169,8 @@ async function typeText(fullText, textNode, ms_per_char, cursorEl) {
 
     function appendChar() {
       if (i >= fullText.length) {
-        if (cursorEl) {
-          normalMode(cursorEl);
-        }
+        const keepCursor = Boolean(opts?.keepCursor);
+        if (cursorEl && !keepCursor) normalMode(cursorEl);
         resolve();
         return;
       }
@@ -127,6 +182,27 @@ async function typeText(fullText, textNode, ms_per_char, cursorEl) {
   });
 }
 
+/* Collect and type all the nodes that have the data-typewrite attribute. */
+async function runTypewriteSequence() {
+  const targets = collectTypewriteTargets();
+  if (targets.length === 0) return;
+
+  for (const t of targets) t.textNode.textContent = "";
+
+  for (const t of targets) {
+    moveCursorToTextNode(t.textNode, cursor);
+    insertMode(cursor);
+
+    if (t.delay > 0) await sleep(t.delay);
+    await typeText(t.fullText, t.textNode, t.speed, cursor, {
+      keepCursor: true,
+    });
+  }
+
+  normalMode(cursor);
+}
+
+/* Render all the defined projects. */
 function renderProjects() {
   const list = document.querySelector(".projects-list");
   list.innerHTML = "";
@@ -150,19 +226,8 @@ function renderProjects() {
 }
 
 function init() {
-  if (heroName) {
-    const textNode = heroName.childNodes[0];
-    const fullText = textNode?.textContent ?? "";
-
-    if (textNode) {
-      textNode.textContent = "";
-      setTimeout(() => {
-        typeText(fullText, textNode, DEFAULT_CHAR_SPEED_MS, cursor);
-      }, 200);
-    }
-  }
-
   window.addEventListener("scroll", onScroll, { passive: true });
+  void runTypewriteSequence();
 
   renderProjects();
   updateActiveLink();
