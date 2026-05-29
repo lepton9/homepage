@@ -176,7 +176,9 @@ ul {
   background: var(--surface);
   border-left: 2px solid var(--border);
   padding: 1.5rem 1.75rem;
-  transition: border-color 0.3s, background-color 0.3s;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
 }
 
 .project-card:hover {
