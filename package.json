@@ -5,9 +5,11 @@
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "wrangler": "^3.114.17"
   },
   "scripts": {
+    "dev": "wrangler pages dev public --live-reload",
     "format": "prettier --write .",
     "formatcheck": "prettier --check .",
     "lint": "eslint .",
