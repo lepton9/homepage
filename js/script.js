@@ -1,6 +1,37 @@
 
-
-const projects = [];
+const projects = [
+  {
+    name: "ztask",
+    source: "https://github.com/lepton9/ztask",
+    description: "A task runner for automating workflows.",
+    tags: ["Zig", "CLI", "TUI", "Linux", "Windows"],
+  },
+  {
+    name: "asconv",
+    source: "https://github.com/lepton9/asconv",
+    link: "https://asconv.thelepton.com",
+    description: "A tool to convert images or videos to ASCII.",
+    tags: ["Zig", "CLI"],
+  },
+  {
+    name: "vbdist",
+    source: "https://github.com/lepton9/vbdist",
+    description: "A tool for creating teams of equal size by evaluating player attributes.",
+    tags: ["C", "TUI"],
+  },
+  {
+    name: "zcli",
+    source: "https://github.com/lepton9/zcli",
+    description: "CLI argument parser library in Zig.",
+    tags: ["Zig"],
+  },
+  {
+    name: "lim",
+    source: "https://github.com/lepton9/lim",
+    description: "A terminal text editor. Inspired by Vim.",
+    tags: ["C++"],
+  },
+];
 
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
@@ -52,17 +83,20 @@ function renderProjects() {
   const list = document.querySelector(".projects-list");
   list.innerHTML = "";
   for (const p of projects) {
-    const languages = p.languages.map((t) => `<li class="lang-tag">${t}</li>`).join("");
+    const tags = p.tags.map((t) => `<li class="lang-tag">${t}</li>`).join("");
     list.innerHTML += `
       <article class="project-card">
         <div class="project-top">
           <h3 class="project-title">
-            <span class="project-arrow">&gt;</span> ${p.name}
+            <span class="project-arrow">&gt;</span> 
+            <a href="${p.link ?? p.source}" aria-label="Project" class="project-link">
+              ${p.name}
+            </a>
           </h3>
           <a href="${p.source}" aria-label="Source code" class="project-link">src</a>
         </div>
         <p class="project-description">${p.description}</p>
-        <ul class="project-tech">${languages}</ul>
+        <ul class="project-tech">${tags}</ul>
       </article>`;
   }
 }
