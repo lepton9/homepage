@@ -121,6 +121,46 @@ ul {
   color: var(--white);
 }
 
+.socials {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.social-link {
+  width: 35px;
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--white-dim);
+  background: transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    transform 0.15s;
+}
+
+.social-link:hover {
+  color: var(--white);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.social-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.social-link svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .cursor {
   color: var(--accent);
   display: none;
@@ -275,6 +315,11 @@ ul {
 
   .hero-name {
     font-size: 2rem;
+  }
+
+  .social-link {
+    width: 34px;
+    height: 34px;
   }
 
   .project-card {
