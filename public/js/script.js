@@ -33,12 +33,15 @@ const projects = [
   },
 ];
 
-const DEFAULT_CHAR_SPEED_MS = 70;
+const DEFAULT_CHAR_SPEED_MS = 2;
 
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
 
 const cursor = createCursor();
+
+let typewriteObserver = null;
+let typewriteChain = Promise.resolve();
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -96,6 +99,10 @@ function collectTypewriteTargets() {
     .map((el) => {
       const textNode = getTypewriteTextNode(el);
 
+      const trigger = (
+        el.getAttribute("data-typewrite-trigger") ?? "view"
+      ).toLowerCase();
+
       const preserveWhitespace = el.hasAttribute(
         "data-typewrite-preserve-whitespace"
       );
@@ -119,6 +126,7 @@ function collectTypewriteTargets() {
       return {
         el,
         textNode,
+        trigger,
         fullText,
         speed: Number.isFinite(speed) ? speed : DEFAULT_CHAR_SPEED_MS,
         delay: Number.isFinite(delay) ? delay : 0,
@@ -182,24 +190,106 @@ async function typeText(fullText, textNode, ms_per_char, cursorEl, opts) {
   });
 }
 
-/* Collect and type all the nodes that have the data-typewrite attribute. */
-async function runTypewriteSequence() {
+/* Enqueues a function to be executed sequentially in the typewrite chain. */
+function enqueueTypewrite(fn) {
+  typewriteChain = typewriteChain.then(fn, fn);
+  return typewriteChain;
+}
+
+function isTypewriteDone(el) {
+  return el.hasAttribute("data-typewrite-done");
+}
+
+function markTypewriteDone(el) {
+  el.setAttribute("data-typewrite-done", "1");
+}
+
+/*
+ * Write all the targets sequentially.
+ * Uses the given cursor or the global cursor if undefined.
+ */
+async function runTypewriteTargets(targets, writeCursor) {
+  const todo = targets.filter((t) => t.el && !isTypewriteDone(t.el));
+  if (todo.length === 0) return;
+
+  let selectedCursor = writeCursor ?? cursor;
+
+  insertMode(selectedCursor);
+
+  for (const t of todo) {
+    moveCursorToTextNode(t.textNode, selectedCursor);
+    if (t.delay > 0) await sleep(t.delay);
+    await typeText(t.fullText, t.textNode, t.speed, selectedCursor, {
+      keepCursor: true,
+    });
+    markTypewriteDone(t.el);
+  }
+
+  normalMode(selectedCursor);
+}
+
+/* Observe all the target elements */
+function setupTypewriteObserver(viewTargets) {
+  if (typewriteObserver) typewriteObserver.disconnect();
+
+  const byEl = new Map(viewTargets.map((t) => [t.el, t]));
+
+  typewriteObserver = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+
+        const t = byEl.get(e.target);
+        if (!t) continue;
+
+        if (isTypewriteDone(t.el)) {
+          typewriteObserver.unobserve(t.el);
+          continue;
+        }
+
+        typewriteObserver.unobserve(t.el);
+        enqueueTypewrite(() => runTypewriteTargets([t]));
+      }
+    },
+    { threshold: 0.4 }
+  );
+
+  for (const t of viewTargets) {
+    if (!isTypewriteDone(t.el)) typewriteObserver.observe(t.el);
+  }
+}
+
+/* Collect and setup all the typewrite sections */
+function initTypewrite() {
   const targets = collectTypewriteTargets();
   if (targets.length === 0) return;
 
-  for (const t of targets) t.textNode.textContent = "";
-
   for (const t of targets) {
-    moveCursorToTextNode(t.textNode, cursor);
-    insertMode(cursor);
-
-    if (t.delay > 0) await sleep(t.delay);
-    await typeText(t.fullText, t.textNode, t.speed, cursor, {
-      keepCursor: true,
-    });
+    if (!t.el.hasAttribute("data-typewrite-text")) {
+      t.el.setAttribute("data-typewrite-text", t.fullText);
+    }
+    t.textNode.textContent = "";
   }
 
-  normalMode(cursor);
+  const loadTargets = targets.filter((t) => t.trigger === "load");
+  const viewTargets = targets.filter((t) => t.trigger !== "load");
+
+  runTypewriteTargets(loadTargets, createCursor());
+
+  setupTypewriteObserver(viewTargets);
+}
+
+/* Replay all the typewrite sections */
+function replayTypewrite() {
+  return enqueueTypewrite(async () => {
+    const targets = collectTypewriteTargets();
+    for (const t of targets) {
+      t.el.removeAttribute("data-typewrite-done");
+      t.textNode.textContent = "";
+    }
+
+    initTypewrite();
+  });
 }
 
 /* Render all the defined projects. */
@@ -227,7 +317,9 @@ function renderProjects() {
 
 function init() {
   window.addEventListener("scroll", onScroll, { passive: true });
-  void runTypewriteSequence();
+  initTypewrite();
+
+  window.typewriteReplay = replayTypewrite;
 
   renderProjects();
   updateActiveLink();
