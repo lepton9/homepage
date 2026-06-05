@@ -18,11 +18,15 @@
   --white-dim: #e8e8e873;
 
   --border: #161616;
+
+  --header-h: 3.5rem;
+  --status-line-h: 1.8rem;
 }
 
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+  scroll-padding-bottom: 3rem;
 }
 
 body {
@@ -31,6 +35,7 @@ body {
   color: var(--fg);
   line-height: 1.5;
   font-size: 15px;
+  padding-bottom: var(--status-line-h);
 }
 
 ::selection {
@@ -66,12 +71,37 @@ ul {
   border-bottom: 1px solid var(--border);
 }
 
+.status-line {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 100;
+  background: var(--bg-glass);
+  backdrop-filter: blur(5px);
+  border-top: 1px solid var(--border);
+}
+
 .nav {
   padding: 0 1.5rem;
-  height: 3.5rem;
+  height: var(--header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.status-line .nav {
+  height: var(--status-line-h);
+}
+
+.status-line {
+  font-size: 0.8rem;
+}
+
+.mode-normal {
+  color: var(--accent);
+}
+
+.mode-insert {
+  color: #81c784;
 }
 
 .nav-logo {

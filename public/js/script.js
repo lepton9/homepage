@@ -38,6 +38,9 @@ const DEFAULT_CHAR_SPEED_MS = 2;
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
 
+const pageScrollEl = document.getElementById("page-scroll");
+const modeTextEl = document.getElementById("mode");
+
 const cursor = createCursor();
 
 let typewriteObserver = null;
@@ -51,13 +54,19 @@ function sleep(ms) {
 // let mode = "normal";
 
 function normalMode(cursorEl) {
-  // mode = "normal";
+  modeTextEl.textContent = "NORMAL";
+  modeTextEl.classList = null;
+  modeTextEl.classList.add("mode-normal");
+
   cursorEl.classList.remove("active");
   cursorEl.classList.add("blink");
 }
 
 function insertMode(cursorEl) {
-  // mode = "insert";
+  modeTextEl.textContent = "INSERT";
+  modeTextEl.classList = null;
+  modeTextEl.classList.add("mode-insert");
+
   cursorEl.classList.add("active");
   cursorEl.classList.remove("blink");
 }
@@ -138,7 +147,29 @@ function collectTypewriteTargets() {
 function onScroll() {
   window.requestAnimationFrame(() => {
     updateActiveLink();
+    updatePageScroll();
   });
+}
+
+function onResize() {
+  updateActiveLink();
+  updatePageScroll();
+}
+
+/* Update the page scroll indicator element. */
+function updatePageScroll() {
+  if (!pageScrollEl) return;
+
+  const root = document.documentElement;
+  const maxScroll = root.scrollHeight - root.clientHeight;
+  const scrollTop = root.scrollTop;
+
+  const pct =
+    maxScroll <= 0
+      ? 100
+      : Math.min(100, Math.max(0, Math.round((scrollTop / maxScroll) * 100)));
+
+  pageScrollEl.textContent = `${pct}%`;
 }
 
 /* Update the active link in the header based on the scroll position */
@@ -317,12 +348,15 @@ function renderProjects() {
 
 function init() {
   window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onResize, { passive: true });
+
   initTypewrite();
 
   window.typewriteReplay = replayTypewrite;
 
   renderProjects();
   updateActiveLink();
+  updatePageScroll();
 }
 
 init();
